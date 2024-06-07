@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ALPHABET_SIZE 26
+
+// Trie node structure
+typedef struct TrieNode {
+    struct TrieNode *children[ALPHABET_SIZE];
+    int isEndOfWord;
+} TrieNode;
+
+// Function to create a new trie node
+TrieNode *createNode(void) {
+    TrieNode *node = (TrieNode *)malloc(sizeof(TrieNode));
+    node->isEndOfWord = 0;
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        node->children[i] = NULL;
+    }
+    return node;
+}
+
+// Function to insert a word into the trie
+void insert(TrieNode *root, const char *word) {
+    TrieNode *current = root;
+    while (*word) {
+        int index = *word - 'a';
+        if (!current->children[index]) {
+            current->children[index] = createNode();
+        }
+        current = current->children[index];
+        word++;
+    }
+    current->isEndOfWord = 1;
+}
+
+// Function to search for a word in the trie
+int search(TrieNode *root, const char *word) {
+    TrieNode *current = root;
+    while (*word) {
+        int index = *word - 'a';
+        if (!current->children[index]) {
+            return 0;
+        }
+        current = current->children[index];
+        word++;
+    }
+    return current->isEndOfWord;
+}
+
+// Function to free the trie
+void freeTrie(TrieNode *root) {
+    if (!root) return;
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        freeTrie(root->children[i]);
+    }
+    free(root);
+}
+
+// Main function to demonstrate the trie
+int main() {
+    // Create the root of the trie
+    TrieNode *root = createNode();
+
+    // Insert words into the trie
+    insert(root, "hello");
+    insert(root, "world");
+    insert(root, "trie");
+    insert(root, "tree");
+
+    // Search for words in the trie
+    printf("Search for 'hello': %s\n", search(root, "hello") ? "Found" : "Not Found");
+    printf("Search for 'world': %s\n", search(root, "world") ? "Found" : "Not Found");
+    printf("Search for 'trie': %s\n", search(root, "trie") ? "Found" : "Not Found");
+    printf("Search for 'tree': %s\n", search(root, "tree") ? "Found" : "Not Found");
+    printf("Search for 'tried': %s\n", search(root, "tried") ? "Found" : "Not Found");
+
+    // Free the trie
+    freeTrie(root);
+
+    return 0;
+}
