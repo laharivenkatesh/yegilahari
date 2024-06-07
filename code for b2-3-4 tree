@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_KEYS 3
+#define MAX_CHILDREN 4
+
+typedef struct Node {
+    int n;
+    int keys[MAX_KEYS];
+    struct Node *children[MAX_CHILDREN];
+    int leaf;
+} Node;
+
+
+Node *createNode(int leaf) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->n = 0;
+    node->leaf = leaf;
+    for (int i = 0; i < MAX_CHILDREN; i++)
+        node->children[i] = NULL;
+    return node;
+}
+
+void splitChild(Node *x, int i, Node *y) {
+    Node *z = createNode(y->leaf);
+    z->n = 1;
+    z->keys[0] = y->keys[2];
+    if (!y->leaf) {
+        for (int j = 0; j < 2; j++)
+            z->children[j] = y->children[j + 2];
+    }
+    y->n = 1;
+    for (int j = x->n; j >= i + 1; j--)
+        x->children[j + 1] = x->children[j];
+    x->children[i + 1] = z;
+    for (int j = x->n - 1; j >= i; j--)
+        x->keys[j + 1] = x->keys[j];
+    x->keys[i] = y->keys[1];
+    x->n++;
+}
+
+
+void insertNonFull(Node *x, int k) {
+    int i = x->n - 1;
+    if (x->leaf) {
+        while (i >= 0 && k < x->keys[i]) {
+            x->keys[i + 1] = x->keys[i];
+            i--;
+        }
+        x->keys[i + 1] = k;
+        x->n++;
+    } else {
+        while (i >= 0 && k < x->keys[i])
+            i--;
+        i++;
+        if (x->children[i]->n == MAX_KEYS) {
+            splitChild(x, i, x->children[i]);
+            if (k > x->keys[i])
+                i++;
+        }
+        insertNonFull(x->children[i], k);
+    }
+}
+
+
+void insert(Node **root, int k) {
+    Node *r = *root;
+    if (r->n == MAX_KEYS) {
+        Node *s = createNode(0);
+        *root = s;
+        s->children[0] = r;
+        splitChild(s, 0, r);
+        insertNonFull(s, k);
+    } else {
+        insertNonFull(r, k);
+    }
+}
+
+
+void traverse(Node *root) {
+    int i;
+    for (i = 0; i < root->n; i++) {
+        if (!root->leaf)
+            traverse(root->children[i]);
+        printf(" %d", root->keys[i]);
+    }
+    if (!root->leaf)
+        traverse(root->children[i]);
+}
+
+
+int main() {
+    Node *root = createNode(1);
+
+    int keys[] = {10, 20, 5, 6, 12, 30, 7, 17};
+    int n = sizeof(keys) / sizeof(keys[0]);
+
+    for (int i = 0; i < n; i++)
+        insert(&root, keys[i]);
+
+    printf("Traversal of the constructed 2-3-4 tree is: ");
+    traverse(root);
+    printf("\n");
+
+    return 0;
+}
