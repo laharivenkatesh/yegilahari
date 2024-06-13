@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+struct TreeNode* newNode(int data) {
+    struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+struct TreeNode* insert(struct TreeNode* node, int data) {
+    if (node == NULL)
+        return newNode(data);
+    if (data < node->data)
+        node->left = insert(node->left, data);
+    else if (data > node->data)
+        node->right = insert(node->right, data);
+    return node;
+}
+struct TreeNode* search(struct TreeNode* root, int key) {
+    // Base Cases: root is null or key is present at the root
+    if (root == NULL || root->data == key)
+        return root;
+    if (root->data < key)
+        return search(root->right, key);
+    return search(root->left, key);
+}
+struct TreeNode* minValueNode(struct TreeNode* node) {
+    struct TreeNode* current = node;
+    while (current && current->left != NULL)
+        current = current->left;
+    return current;
+}
+struct TreeNode* maxValueNode(struct TreeNode* node) {
+    struct TreeNode* current = node;
+    while (current && current->right != NULL)
+        current = current->right;
+
+    return current;
+}
+void inorder(struct TreeNode* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+int main() {
+    struct TreeNode* root = NULL;
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+    printf("Inorder traversal of the BST: ");
+    inorder(root);
+    printf("\n");
+    int key = 70;
+    struct TreeNode* result = search(root, key);
+    if (result)
+        printf("%d is found in the BST.\n", key);
+    else
+        printf("%d is not found in the BST.\n", key);
+    struct TreeNode* minNode = minValueNode(root);
+    printf("Minimum value in the BST: %d\n", minNode->data);
+    struct TreeNode* maxNode = maxValueNode(root);
+    printf("Maximum value in the BST: %d\n", maxNode->data);
+    return 0;
+}
