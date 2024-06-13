@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+// Queue structure
+struct Queue {
+    int items[MAX_SIZE];
+    int front, rear;
+};
+
+// Initialize queue
+void initQueue(struct Queue *queue) {
+    queue->front = -1;
+    queue->rear = -1;
+}
+
+// Check if queue is full
+int isFull(struct Queue *queue) {
+    return (queue->rear == MAX_SIZE - 1);
+}
+
+// Check if queue is empty
+int isEmpty(struct Queue *queue) {
+    return (queue->front == -1 && queue->rear == -1);
+}
+
+// Enqueue operation
+void enqueue(struct Queue *queue, int item) {
+    if (isFull(queue)) {
+        printf("Queue Overflow\n");
+    } else {
+        if (isEmpty(queue)) {
+            queue->front = 0;
+        }
+        queue->items[++queue->rear] = item;
+        printf("%d enqueued to queue\n", item);
+    }
+}
+
+// Dequeue operation
+int dequeue(struct Queue *queue) {
+    int item;
+    if (isEmpty(queue)) {
+        printf("Queue Underflow\n");
+        return -1;
+    } else {
+        item = queue->items[queue->front];
+        if (queue->front == queue->rear) {
+            queue->front = -1;
+            queue->rear = -1;
+        } else {
+            queue->front++;
+        }
+        return item;
+    }
+}
+
+// Display the queue
+void display(struct Queue *queue) {
+    int i;
+    if (isEmpty(queue)) {
+        printf("Queue is empty\n");
+    } else {
+        printf("Queue elements: ");
+        for (i = queue->front; i <= queue->rear; i++) {
+            printf("%d ", queue->items[i]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    struct Queue queue;
+    initQueue(&queue);
+
+    // Enqueue elements into the queue
+    enqueue(&queue, 10);
+    enqueue(&queue, 20);
+    enqueue(&queue, 30);
+
+    // Display the queue
+    display(&queue);
+
+    // Dequeue an element
+    printf("Dequeued element: %d\n", dequeue(&queue));
+
+    // Display the queue after dequeue
+    display(&queue);
+
+    // Enqueue more elements
+    enqueue(&queue, 40);
+    enqueue(&queue, 50);
+
+    // Display the queue
+    display(&queue);
+
+    return 0;
+}
