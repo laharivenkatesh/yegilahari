@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_VERTICES 10
+
+struct Graph {
+    int vertices;
+    int** adjacency_matrix;
+    int* visited;
+};
+
+struct Graph* createGraph(int vertices) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->vertices = vertices;
+    graph->adjacency_matrix = (int**)malloc(vertices * sizeof(int*));
+    graph->visited = (int*)malloc(vertices * sizeof(int));
+
+    for (int i = 0; i < vertices; i++) {
+        graph->adjacency_matrix[i] = (int*)malloc(vertices * sizeof(int));
+        graph->visited[i] = 0;
+    }
+
+    return graph;
+}
+
+void DFS(struct Graph* graph, int vertex) {
+    printf("%d ", vertex);
+    graph->visited[vertex] = 1;
+
+    for (int i = 0; i < graph->vertices; i++) {
+        if (graph->adjacency_matrix[vertex][i] && !graph->visited[i]) {
+            DFS(graph, i);
+        }
+    }
+}
+
+int main() {
+    struct Graph* graph = createGraph(4);
+    int adjacency_matrix[4][4] = {
+        {0, 1, 1, 0},
+        {0, 0, 1, 0},
+        {1, 0, 0, 1},
+        {0, 0, 0, 1}
+    };
+
+    for (int i = 0; i < graph->vertices; i++) {
+        for (int j = 0; j < graph->vertices; j++) {
+            graph->adjacency_matrix[i][j] = adjacency_matrix[i][j];
+        }
+    }
+
+    printf("Depth First Search Traversal: ");
+    DFS(graph, 0);
+
+    return 0;
+}
