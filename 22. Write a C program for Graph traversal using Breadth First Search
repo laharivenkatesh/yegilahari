@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int graph[MAX][MAX], visited[MAX];
+int queue[MAX], front = -1, rear = -1, vertices;
+
+void bfs(int start) {
+    visited[start] = 1;
+    queue[++rear] = start;
+
+    while (front != rear) {
+        int current = queue[++front];
+        printf("%d ", current);
+
+        for (int i = 0; i < vertices; i++) {
+            if (graph[current][i] == 1 && !visited[i]) {
+                visited[i] = 1;
+                queue[++rear] = i;
+            }
+        }
+    }
+}
+
+int main() {
+    int startVertex;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
+
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    for (int i = 0; i < vertices; i++) {
+        visited[i] = 0;
+    }
+
+    printf("Enter the starting vertex for BFS: ");
+    scanf("%d", &startVertex);
+
+    printf("BFS Traversal: ");
+    bfs(startVertex);
+
+    return 0;
+}
