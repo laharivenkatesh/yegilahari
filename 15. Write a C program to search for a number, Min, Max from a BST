@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+struct TreeNode* newNode(int data) {
+    struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+struct TreeNode* insert(struct TreeNode* node, int data) {
+    if (node == NULL) {
+        return newNode(data);
+    }
+    if (data < node->data) {
+        node->left = insert(node->left, data);
+    } else if (data > node->data) {
+        node->right = insert(node->right, data);
+    }
+    return node;
+}
+struct TreeNode* search(struct TreeNode* root, int key) {
+    if (root == NULL || root->data == key) {
+        return root;
+    }
+    if (root->data < key) {
+        return search(root->right, key);
+    }
+    return search(root->left, key);
+}
+struct TreeNode* minValueNode(struct TreeNode* node) {
+    struct TreeNode* current = node;
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+    return current;
+}
+struct TreeNode* maxValueNode(struct TreeNode* node) {
+    struct TreeNode* current = node;
+    while (current && current->right != NULL) {
+        current = current->right;
+    }
+    return current;
+}
+int main() {
+    struct TreeNode* root = NULL;
+    int keys[] = {50, 30, 20, 40, 70, 60, 80};
+    for (int i = 0; i < sizeof(keys) / sizeof(keys[0]); i++) {
+        root = insert(root, keys[i]);
+    }
+    int searchKey = 60;
+    struct TreeNode* foundNode = search(root, searchKey);
+    if (foundNode) {
+        printf("%d found in the BST\n", searchKey);
+    } else {
+        printf("%d not found in the BST\n", searchKey);
+    }
+    struct TreeNode* minNode = minValueNode(root);
+    if (minNode) {
+        printf("Minimum value in BST is: %d\n", minNode->data);
+    } else {
+        printf("BST is empty\n");
+    }
+    struct TreeNode* maxNode = maxValueNode(root);
+    if (maxNode) {
+        printf("Maximum value in BST is: %d\n", maxNode->data);
+    } else {
+        printf("BST is empty\n");
+    }
+    return 0;
+}
