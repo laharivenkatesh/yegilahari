@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool isValidString(const char* str) {
+    while (*str) {
+        if (!isalpha(*str)) {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
+int main() {
+    const char* str1 = "HelloWorld";   // Valid string
+    const char* str2 = "Hello123";     // Invalid string
+    const char* str3 = "12345";        // Invalid string
+
+    printf("\"%s\" is %s\n", str1, isValidString(str1) ? "valid" : "invalid");
+    printf("\"%s\" is %s\n", str2, isValidString(str2) ? "valid" : "invalid");
+    printf("\"%s\" is %s\n", str3, isValidString(str3) ? "valid" : "invalid");
+
+    return 0;
+}
